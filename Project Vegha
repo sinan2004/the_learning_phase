@@ -1,0 +1,43 @@
+#define killSwitch     D5
+#define lightIntensity A0
+#define bright         D1
+#define dim            D3
+#define sensitivity    255/6
+#define gnd_bright     D2
+#define gnd_dim        D4
+void setup() {
+  pinMode (killSwitch , INPUT_PULLUP);
+  pinMode (lightIntensity , INPUT);
+  pinMode (bright , OUTPUT);
+  pinMode (dim , OUTPUT);
+  Serial.begin(9600);
+}
+
+void loop() 
+{
+  int state = digitalRead(killSwitch);
+  if (state == HIGH)
+  {
+    lightPWM(analogRead(lightIntensity));
+    Serial.println(analogRead(lightIntensity));
+  }
+  else
+  {
+    Serial.println("kill switch ON ");
+  }
+}
+
+void lightPWM( int envLight)
+{
+  int lightval=map(envLight,0,1023,255,0);
+  if (lightval <= sensitivity)
+  {
+    digitalWrite(dim, HIGH);
+    digitalWrite(bright,LOW);
+  }
+  else{
+  analogWrite(bright,lightval);
+  digitalWrite(dim ,LOW);
+  }
+
+}
